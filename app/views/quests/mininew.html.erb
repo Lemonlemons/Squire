@@ -1,0 +1,22 @@
+<div class="row">
+  <h1>Create Quest</h1>
+</div>
+<hr>
+<div class="row">
+  <div class="col-xs-6 col-sm-6 col-md-6">
+    <img src="<%= @quest.imagesrc %>" class="preview">
+  </div>
+  <div class="col-xs-6 col-sm-6 col-md-6">
+    <h3 class="flat">It needs a title...</h3>
+    <%= form_for @quest, url:"/quests" do |f| %>
+      <div class="form-group">
+        <label for="title">Title:</label>
+        <%= f.text_field :title, class:"form-control" %>
+      </div>
+      <%= f.hidden_field :imagesrc, value: @source %>
+      <%= f.hidden_field :duke_id, value: @duke.id %>
+      <%= f.submit "Submit Quest", class:"btn btn-primary btn-block btn-large" %>
+      <button class="btn btn-default btn-block btn-large" onclick="window.open('', '_self', ''); window.close();">Discard Quest</button>
+    <% end %>
+  </div>
+</div>

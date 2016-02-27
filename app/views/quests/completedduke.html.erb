@@ -1,0 +1,58 @@
+<nav class="navbar navbar-default" role="navigation">
+  <div class="navbar-header">
+    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#example-navbar-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+    </button>
+    <%= link_to image_tag("3-slim.png", :width => 150, class:"imager2"), quests_path %>
+  </div>
+  <!-- Collect the nav links, forms, and other content for toggling -->
+  <div class="collapse navbar-collapse" id="example-navbar-collapse">
+    <ul class="nav navbar-nav pull-right">
+      <li>
+          <a href="<%= quests_path %>">Ongoing Quests</a>
+      </li>
+      <li>
+          <a href="<%= completedduke_quest_path(current_duke) %>">Completed Quests</a>
+      </li>
+      <li class="dropdown">
+        <button class="btn btn-primary dropdown-toggle" type="button" id="optionsbutton" data-toggle="dropdown">Options <span class="caret"></span></button>
+        <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+          <li role="presentation", id:"options"><%= link_to 'Edit Profile',edit_duke_registration_path, id:"options" %></li>
+          <li role="presentation" class="divider", id:"options"></li>
+          <li role="presentation", id:"options"><%= link_to "Sign out", destroy_duke_session_path, method: :delete, id:"options" %></li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+</nav>
+<div class="row">
+  <div class="col-md-12">
+    <div class="well well-sm">
+      <h1>Your Completed Quests</h1>
+      <% @quests.each do |quest| %>
+        <div class="row">
+          <div class="col-md-3">
+            <img src="<%= quest.imagesrc %>" class="preview">
+          </div>
+          <div class="col-md-9">
+            <h2><strong>Title: </strong><%= quest.title %></h2>
+            <h3><strong>Description: </strong><%= quest.description %></h3>
+          </div>
+        </div>
+        <hr>
+      <% end %>
+      <% if @quests.count < 10 %>
+        <% extra = 10 - @quests.count %>
+        <% while extra > 0 do %>
+          <div class="row standard">
+          </div>
+          <hr>
+          <% extra = extra-1 %>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+</div>

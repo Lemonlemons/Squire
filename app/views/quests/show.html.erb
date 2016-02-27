@@ -1,0 +1,145 @@
+<nav class="navbar navbar-default" role="navigation">
+  <div class="navbar-header">
+    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#example-navbar-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+    </button>
+    <%= link_to image_tag("3-slim.png", :width => 150, class:"imager2"), quests_path %>
+  </div>
+  <!-- Collect the nav links, forms, and other content for toggling -->
+  <div class="collapse navbar-collapse" id="example-navbar-collapse">
+    <ul class="nav navbar-nav pull-right">
+      <li>
+          <a href="<%= quests_path %>">Dashboard</a>
+      </li>
+      <li>
+          <a href="<%= completed_quest_path(current_user) %>">Completed Quests</a>
+      </li>
+      <li>
+          <a href="<%= stats_quest_path(current_user) %>">Stats</a>
+      </li>
+      <li class="dropdown">
+        <button class="btn btn-primary dropdown-toggle" type="button" id="optionsbutton" data-toggle="dropdown">Options <span class="caret"></span></button>
+        <ul class="dropdown-menu pull-right" role="menu" aria-labelledby="menu1">
+          <li role="presentation", id:"options"><%= link_to 'Edit Profile',edit_user_registration_path, id:"options" %></li>
+          <li role="presentation", id:"options"><%= link_to 'Edit Questionairre', userquestionnaire_quest_path(current_user), id:"options" %></li>
+          <li role="presentation" class="divider", id:"options"></li>
+          <li role="presentation", id:"options"><%= link_to "Sign out", destroy_user_session_path, method: :delete, id:"options" %></li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+</nav>
+<div class="container">
+  <div class="row">
+    <div class="col-md-8">
+      <div class="well well-sm">
+        <% if @quest.is_completed == true %>
+          <h1>Thank You, this Quest is completed</h1>
+        <% elsif @quest.is_proofsubmitted == true %>
+          <h1>Thank You for submitting proof</h1>
+          <% if current_user.is_admin == true %>
+            <h1><%= @quest.title %></h1>
+            <h2><%= @quest.description %></h2>
+            <% @items.each do |item| %>
+              <div class="row">
+                <div class="row">
+                  <h4><%= item.name %></h4>
+                </div>
+                <div class="row">
+                  <strong>Price: </strong><%= number_to_currency(item.price) %> X <strong>Quantity: </strong><%= item.quantity %> = <%= number_to_currency(item.price * item.quantity) %>
+                </div>
+                <div class="row">
+                  <strong>Brand: </strong><%= item.brand %> <strong>Size: </strong><%= item.size %>
+                </div>
+                <div class="row">
+                  <%= item.daystoship %> Days to Ship
+                </div>
+                <div class="row">
+                  <strong>Associated proof: </strong><%= link_to image_tag(item.proofimg, :width => 200), image_path(item.proofimg) if item.proofimg.present? %>
+                </div>
+              </div>
+              <hr>
+            <% end %>
+
+            <h2>Total Price: <%= number_to_currency(@quest.totalprice) %></h2>
+
+            <%= button_to "Release Payment", releasepayment_quest_path(@quest), :method => "get", class:"btn btn-primary"%>
+          <% end %>
+
+        <% elsif @quest.is_proposalaccepted == true %>
+          <h1>Congrats, the proposal was accepted please pay for and submit the proof</h1>
+
+          <p><%= link_to "Back", edit_quest_path(@quest), class:"btn btn-default" %></p>
+
+        <% elsif @quest.is_proposalsent == true %>
+          <h1>Thank you, let's wait to see what the duke thinks.</h1>
+        <% elsif @quest.is_accepted == true %>
+          <div class="row">
+            <div class="col-md-6">
+              <h1>The Quest:</h1>
+              <img src="<%= @quest.imagesrc %>" class="preview">
+            </div>
+            <div class="col-md-6">
+              <h2><%= @quest.title %></h2>
+              <h3><%= @quest.description %></h3>
+              <% @items.each do |item| %>
+                <div class="row">
+                  <div class="row">
+                    <h4><%= item.name %></h4>
+                  </div>
+                  <div class="row">
+                    <strong>Price: </strong><%= number_to_currency(item.price) %> X <strong>Quantity: </strong><%= item.quantity %> = <%= number_to_currency(item.price * item.quantity) %>
+                  </div>
+                  <div class="row">
+                    <strong>Brand: </strong><%= item.brand %> <strong>Size: </strong><%= item.size %>
+                  </div>
+                  <div class="row">
+                    <%= item.daystoship %> Days to Ship
+                  </div>
+                </div>
+                <hr>
+              <% end %>
+              <h3>Total Price: <%= number_to_currency(@quest.totalprice) %></h3>
+              <p>Click the button below to accept the proposal and pay for your Quest.</p>
+              <%= image_tag("stripe-pay-button.png") %>
+              <p>(In the Duke's version this button will allow them to pay for the quest)</p>
+              <div class="col-md-6">
+                <%= button_to "Submit Proposal", submitproposal_quest_path(@quest), :method => "get", class:"btn btn-primary" %>
+              </div>
+              <div class="col-md-4 col-md-offset-2">
+                <p><%= link_to "Back", edit_quest_path(@quest), class:"btn btn-default" %></p>
+              </div>
+            </div>
+          </div>
+        <% else %>
+          <p>Nope</p>
+        <% end %>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="well well-sm">
+        <h2>About your Squire</h2>
+        <%= link_to image_tag(@user.profilepic, width:200), image_path(@user.profilepic) if @user.profilepic.present? %>
+        <h4>Name: <%= @user.firstname %> <%= @user.lastname %></h4>
+        <h4>Description: <%= @user.description %></h4>
+        <p>Question 1: Why did you sign up for Squire?</p>
+        <strong><%= @user.question1 %></strong>
+        <br />
+        <p>Question 2: How do you participate in your community?</p>
+        <strong><%= @user.question2 %></strong>
+        <br />
+        <p>Question 3: What's something interesting about you?</p>
+        <strong><%= @user.question3 %></strong>
+        <br />
+        <h3>Reviews of this Squire</h3>
+        <% @reviews.each do |review| %>
+          <p>Rating: <%= review.rating %></p>
+          <p><%= review.explanation %></p>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

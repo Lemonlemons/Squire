@@ -1,0 +1,163 @@
+<% if request.fullpath.include?('minisignup') %>
+<% else %>
+  <nav class="navbar navbar-default">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header page-scroll">
+      <%= image_tag("3-slim.png", :width => 150, class:"imager2") %>
+    </div>
+  </nav>
+  <div class='container'>
+    <div class='col-md-8'>
+      <div class="row">
+        <div class="col-md-12">
+          <h2>Please sign up to use Squire</h2>
+        </div>
+      </div>
+
+      <%= form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
+        <%= devise_error_messages! %>
+
+        <div class="row">
+          <div class="col-md-12">
+            <%= f.label :email, "Email:" %><br />
+            <%= f.email_field :email, autofocus: true, class:"form-control" %>
+          </div>
+        </div>
+
+        <div class='row'>
+          <div class='col-md-6'>
+            <br />
+          <%= f.label :firstname, "Firstname:" %><br />
+          <%= f.text_field :firstname, class:"form-control" %>
+          </div>
+          <div class='col-md-6'>
+            <br />
+          <%= f.label :lastname, "Lastname:" %><br />
+          <%= f.text_field :lastname, class:"form-control" %>
+          </div>
+        </div>
+
+        <div class='row'>
+          <div class='col-md-12'>
+            <br />
+            <%= f.label :birthday, "Your Birthday:" %><br />
+            <%= f.date_select :birthday, options={start_year: 1933} %>
+          </div>
+        </div>
+
+        <div class='row'>
+          <div class='col-md-12'>
+            <br />
+            <%= f.label :phonenumber, "Phonenumber:" %><br />
+            <%= f.text_field :phonenumber, class:"form-control" %>
+          </div>
+        </div>
+
+        <div class='row'>
+          <div class='col-md-12'>
+            <br />
+            <%= f.label :mailingaddress, "Mailing Address:" %><br />
+            <%= f.text_field :mailingaddress, class:"form-control" %>
+          </div>
+        </div>
+
+        <div class='row'>
+          <div class='col-md-6'>
+            <br />
+          <%= f.label :mailingcity, "City:" %><br />
+          <%= f.text_field :mailingcity, class:"form-control" %>
+          </div>
+
+          <div class='col-md-1'>
+            <br />
+          <%= f.label :mailingstate, "State:" %><br />
+          <%= f.collection_select(:mailingstate, State.all, :name, :name, class:"form-control") %>
+          </div>
+
+          <div class='col-md-4 col-md-offset-1'>
+            <br />
+          <%= f.label :mailingzipcode, "Zipcode:" %><br />
+          <%= f.text_field :mailingzipcode, class:"form-control" %>
+          </div>
+        </div>
+
+        <div class='row'>
+          <div class='col-md-12'>
+            <br />
+            <%= f.label :is_mailingsameasphysicaladdress, "Is your physical address the same as your mailing address?" %>
+            <%= f.radio_button :is_mailingsameasphysicaladdress, true, class:"switcher" %> <%= f.label :is_mailingsameasphysicaladdress, "Same" %>
+            <%= f.radio_button :is_mailingsameasphysicaladdress, false, class:"switcher" %> <%= f.label :is_mailingsameasphysicaladdress, "Different" %>
+          </div>
+        </div>
+
+        <div id="physical">
+          <div class='row'>
+            <div class='col-md-12'>
+              <br />
+              <%= f.label :physicaladdress, "Physical Address:" %><br />
+              <%= f.text_field :physicaladdress, class:"form-control" %>
+            </div>
+          </div>
+
+          <div class='row'>
+            <div class='col-md-6'>
+              <br />
+            <%= f.label :physicalcity, "City:" %><br />
+            <%= f.text_field :physicalcity, class:"form-control" %>
+            </div>
+
+            <div class='col-md-1'>
+              <br />
+            <%= f.label :physicalstate, "State:" %><br />
+            <%= f.collection_select(:physicalstate, State.all, :name, :name, class:"form-control") %>
+            </div>
+
+            <div class='col-md-4 col-md-offset-1'>
+              <br />
+            <%= f.label :physicalzipcode, "Zipcode:" %><br />
+            <%= f.text_field :physicalzipcode, class:"form-control" %>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-12">
+            <br />
+            <%= f.label :password %> <% if @validatable %><i>(<%= @minimum_password_length %> characters minimum)</i><% end %><br />
+            <%= f.password_field :password, autocomplete: "off", class:"form-control" %>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-12">
+            <br />
+            <%= f.label :password_confirmation %><br />
+            <%= f.password_field :password_confirmation, autocomplete: "off", class:"form-control" %>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12">
+            <%= f.submit "Sign up", class:"btn btn-primary" %>
+          </div>
+        </div>
+      <% end %>
+      <br />
+      <div class="row">
+        <div class="col-md-12">
+          <%= render "dukes/shared/links" %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+  </footer>
+<% end %>
+
+<script>
+  $(document).ready(function () {
+    $('.switcher').click(function () {
+      $("#physical").toggle();
+    });
+  });
+</script>

@@ -1,0 +1,592 @@
+<% if user_signed_in? %>
+  <nav class="navbar navbar-default" role="navigation">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#example-navbar-collapse">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+      </button>
+      <%= link_to image_tag("3-slim.png", :width => 150, class:"imager2"), quests_path %>
+    </div>
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="example-navbar-collapse">
+      <ul class="nav navbar-nav pull-right">
+        <li>
+            <a href="<%= quests_path %>">Dashboard</a>
+        </li>
+        <li>
+            <a href="<%= completed_quest_path(current_user) %>">Completed Quests</a>
+        </li>
+        <li>
+            <a href="<%= stats_quest_path(current_user) %>">Stats</a>
+        </li>
+        <li class="dropdown">
+          <button class="btn btn-primary dropdown-toggle" type="button" id="optionsbutton" data-toggle="dropdown">Options <span class="caret"></span></button>
+          <ul class="dropdown-menu pull-right" role="menu" aria-labelledby="menu1">
+            <li role="presentation", id:"options"><%= link_to 'Edit Profile',edit_user_registration_path, id:"options" %></li>
+            <li role="presentation", id:"options"><%= link_to 'Edit Questionairre', userquestionnaire_quest_path(current_user), id:"options" %></li>
+            <li role="presentation" class="divider", id:"options"></li>
+            <li role="presentation", id:"options"><%= link_to "Sign out", destroy_user_session_path, method: :delete, id:"options" %></li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </nav>
+  <div class='row'>
+    <div class='col-md-9'>
+      <div class="well well-sm">
+        <div class='container'>
+          <h1>Welcome Back Squire</h1>
+
+          <% if current_user.completedbasictraining == false %>
+            <h3>Complete Registration: <i class="fa fa-check"></i></h3>
+            <h3>Complete Training Videos: </h3>
+            <h3>Complete Squire Questionnaire: </h3>
+            <h3>Complete Interview: </h3>
+            <h3>Complete Sign-Up for Stripe: </h3>
+            <h2>now please watch these training videos</h2>
+            <a href='<%= dotraining_quest_path(current_user) %>'>Complete Training Here</a>
+          <% elsif current_user.completedquestionairre == false %>
+            <h3>Complete Registration: <i class="fa fa-check"></i></h3>
+            <h3>Complete Training Videos: <i class="fa fa-check"></i></h3>
+            <h3>Complete Squire Questionnaire: </h3>
+            <h3>Complete Interview: </h3>
+            <h3>Complete Sign-Up for Stripe: </h3>
+            <h2>Now please complete the Squire Questionnaire</h2>
+            <a href='<%= userquestionnaire_quest_path(current_user) %>'>Complete Questionnaire Here</a>
+          <% elsif current_user.completedinterview == false %>
+            <h3>Complete Registration: <i class="fa fa-check"></i></h3>
+            <h3>Complete Training Videos: <i class="fa fa-check"></i></h3>
+            <h3>Complete Squire Questionnaire: <i class="fa fa-check"></i></h3>
+            <h3>Complete Interview: </h3>
+            <h3>Complete Sign-Up for Stripe: </h3>
+            <h2>Now please complete the Squire Questionnaire</h2>
+            <a href='<%= dointerview_quest_path(current_user) %>'>Complete Interview Here</a>
+          <% elsif current_user.completedstripe == false %>
+            <h3>Complete Registration: <i class="fa fa-check"></i></h3>
+            <h3>Complete Training Videos: <i class="fa fa-check"></i></h3>
+            <h3>Complete Squire Questionnaire: <i class="fa fa-check"></i></h3>
+            <h3>Complete Interview: <i class="fa fa-check"></i></h3>
+            <h3>Complete Sign-Up for Stripe: </h3>
+            <h2>Please complete stripe sign-up</h2>
+            <%= link_to image_tag('blue-on-light.png'), user_omniauth_authorize_path(:stripe_connect,
+              "stripe_user[email]" => current_user.email,
+              "stripe_user[url]" => "http://www.usesquire.com",
+              "stripe_user[country]" => "US",
+              "stripe_user[phone_number]" => current_user.phonenumber,
+              "stripe_user[business_name]" => "Squire" + current_user.id.to_s,
+              "stripe_user[business_type]" => "sole_prop",
+              "stripe_user[first_name]" => current_user.firstname,
+              "stripe_user[last_name]" => current_user.lastname,
+              "stripe_user[dob_day]" => current_user.birthday.day,
+              "stripe_user[dob_month]" => current_user.birthday.month,
+              "stripe_user[dob_year]" => current_user.birthday.year,
+              "stripe_user[street_address]" => current_user.address,
+              "stripe_user[city]" => current_user.city,
+              "stripe_user[state]" => current_user.state,
+              "stripe_user[zip]" => current_user.zipcode,
+              "stripe_user[physical_product]" => "false",
+              "stripe_user[product_category]" => "consulting",
+              "stripe_user[product_description]" => "Find any product for a customer based on an image.",
+              #"stripe_user[average_payment]" => 1000,
+              #"stripe_user[past_year_volume]" => 0,
+              "stripe_user[currency]" => "usd") %>
+          <% else %>
+            <h3>Complete Registration: <i class="fa fa-check"></i></h3>
+            <h3>Complete Training Videos: <i class="fa fa-check"></i></h3>
+            <h3>Complete Squire Questionnaire: <i class="fa fa-check"></i></h3>
+            <h3>Complete Interview: <i class="fa fa-check"></i></h3>
+            <h3>Complete Sign-Up for Stripe: <i class="fa fa-check"></i></h3>
+          <% end %>
+        </div>
+      </div>
+    </div>
+    <div class='col-md-3'>
+      <div class='well well-sm'>
+        <p>Logged in as <strong><%= current_user.email %></strong></br>
+        There are <%= @quests.count %> quests available</p>
+        <%= link_to "Get Quest", getmeaquest_quest_path(current_user), :method => "get", class: 'btn btn-primary btn-block' %>
+      </div>
+      <div class='well well-sm'>
+        <h2>Ongoing Quests</h2>
+        <hr>
+        <% @quests2.each do |quest| %>
+          <% if quest.is_proofsubmitted == false %>
+            <div class="row">
+              <div class="col-md-5">
+                <a href="<%= edit_quest_path(quest) %>"><img src="<%= quest.imagesrc %>" alt="<%= quest.id %>" class="preview"></a>
+              </div>
+              <div class="col-md-7">
+                <div class="row">
+                  <p><%= link_to quest.title, edit_quest_path(quest) %></p>
+                </div>
+                <div class="row">
+                </div>
+              </div>
+            </div>
+            <hr />
+          <% end %>
+        <% end %>
+        <% if @quests2.count < 3 %>
+          <% extra = 3 - @quests2.count %>
+          <% while extra > 0 do %>
+            <div class="row standard">
+            </div>
+            <hr>
+            <% extra = extra-1 %>
+          <% end %>
+        <% end %>
+      </div>
+      <div class="well well-sm">
+        <h2>Quests awaiting proof confirmation</h2>
+        <hr>
+        <% @quests3.each do |quest| %>
+          <% if quest.is_proofsubmitted == true %>
+            <div class="row">
+              <div class="col-md-5">
+                <a href="<%= edit_quest_path(quest) %>"><img src="<%= quest.imagesrc %>" alt="<%= quest.id %>" class="preview"></a>
+              </div>
+              <div class="col-md-7">
+                <div class="row">
+                  <p><%= link_to quest.title, edit_quest_path(quest) %></p>
+                </div>
+                <div class="row">
+                </div>
+              </div>
+            </div>
+            <hr />
+          <% end %>
+        <% end %>
+        <% if @quests3.count < 3 %>
+          <% extra = 3 - @quests2.count %>
+          <% while extra > 0 do %>
+            <div class="row standard">
+            </div>
+            <hr>
+            <% extra = extra-1 %>
+          <% end %>
+        <% end %>
+      </div>
+      <div class="well well-sm">
+        <h2>Stats</h2>
+        <p>Number of Quests Completed: <%= current_user.completedquests %></p>
+        <p>Number of Notes Completed: <%= current_user.numberofnotes %></p>
+        <p>Number of Reviews Received: <%= current_user.numberofreviews %></p>
+        <p>Review Rating: %<%= current_user.reviewpercentage %></p>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+  </footer>
+<% elsif duke_signed_in? %>
+  <nav class="navbar navbar-default" role="navigation">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#example-navbar-collapse">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+      </button>
+      <%= link_to image_tag("3-slim.png", :width => 150, class:"imager2"), quests_path %>
+    </div>
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="example-navbar-collapse">
+      <ul class="nav navbar-nav pull-right">
+        <li>
+            <a href="<%= quests_path %>">Ongoing Quests</a>
+        </li>
+        <li>
+            <a href="<%= completedduke_quest_path(current_duke) %>">Completed Quests</a>
+        </li>
+        <li class="dropdown">
+          <button class="btn btn-primary dropdown-toggle" type="button" id="optionsbutton" data-toggle="dropdown">Options <span class="caret"></span></button>
+          <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+            <li role="presentation", id:"options"><%= link_to 'Edit Profile',edit_duke_registration_path, id:"options" %></li>
+            <li role="presentation" class="divider", id:"options"></li>
+            <li role="presentation", id:"options"><%= link_to "Sign out", destroy_duke_session_path, method: :delete, id:"options" %></li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </nav>
+  <div class="row">
+    <div class="col-md-4">
+      <div class="well well-sm">
+        <div class="row center">
+          <h1 style="text-align:center;">Download Extension</h1>
+          <%= button_to "Download", quests_path, class:"btn btn-primary btn-lg", style:"margin: 0 auto; width: 300px;", method: :get %>
+        </div>
+      </div>
+      <div class="well well-sm">
+        <div class="row">
+          <h1>Welcome to Squire</h2>
+        </div>
+        <div class="row">
+          <h2>News</h2>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-8">
+      <div class="well well-sm">
+        <h1>Ongoing Quests</h1>
+        <hr>
+        <% @quests.each do |quest| %>
+          <div class="row">
+            <div class="col-md-3">
+              <a href="<%= quest_path(quest) %>"><img src="<%= quest.imagesrc %>" class="preview"></a>
+            </div>
+            <div class="col-md-9">
+              <div class="row">
+                <div class="col-md-12">
+                  <a href="<%= quest_path(quest) %>"><h3><%= quest.title %></h3></a>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-8">
+                  <h3><strong>Progress:</strong></h3>
+                  <% if quest.is_proofsubmitted? %>
+                    <span class="fa-stack fa-lg"><i class="fa fa-square-o fa-stack-2x"></i><i class="fa fa-check fa-stack-1x"></i></span>-
+                    <span class="fa-stack fa-lg"><i class="fa fa-square-o fa-stack-2x"></i><i class="fa fa-check fa-stack-1x"></i></span>-
+                    <span class="fa-stack fa-lg"><i class="fa fa-square-o fa-stack-2x"></i><i class="fa fa-check fa-stack-1x"></i></span>-
+                    <span class="fa-stack fa-lg"><i class="fa fa-square-o fa-stack-2x"></i><i class="fa fa-check fa-stack-1x"></i></span>-
+                    <span class="fa-stack fa-lg"><i class="fa fa-square-o fa-stack-2x"></i><i class="fa fa-check fa-stack-1x"></i></span>
+                  <% elsif quest.is_proposalaccepted? %>
+                    <span class="fa-stack fa-lg"><i class="fa fa-square-o fa-stack-2x"></i><i class="fa fa-check fa-stack-1x"></i></span>-
+                    <span class="fa-stack fa-lg"><i class="fa fa-square-o fa-stack-2x"></i><i class="fa fa-check fa-stack-1x"></i></span>-
+                    <span class="fa-stack fa-lg"><i class="fa fa-square-o fa-stack-2x"></i><i class="fa fa-check fa-stack-1x"></i></span>-
+                    <span class="fa-stack fa-lg"><i class="fa fa-square-o fa-stack-2x"></i><i class="fa fa-check fa-stack-1x"></i></span>-
+                    <span class="fa-stack fa-lg"><i class="fa fa-square-o fa-stack-2x"></i></span>
+                  <% elsif quest.is_proposalsent? %>
+                    <span class="fa-stack fa-lg"><i class="fa fa-square-o fa-stack-2x"></i><i class="fa fa-check fa-stack-1x"></i></span>-
+                    <span class="fa-stack fa-lg"><i class="fa fa-square-o fa-stack-2x"></i><i class="fa fa-check fa-stack-1x"></i></span>-
+                    <span class="fa-stack fa-lg"><i class="fa fa-square-o fa-stack-2x"></i><i class="fa fa-check fa-stack-1x"></i></span>-
+                    <span class="fa-stack fa-lg"><i class="fa fa-square-o fa-stack-2x"></i></span>-
+                    <span class="fa-stack fa-lg"><i class="fa fa-square-o fa-stack-2x"></i></span>
+                  <% elsif quest.is_accepted? %>
+                    <span class="fa-stack fa-lg"><i class="fa fa-square-o fa-stack-2x"></i><i class="fa fa-check fa-stack-1x"></i></span>-
+                    <span class="fa-stack fa-lg"><i class="fa fa-square-o fa-stack-2x"></i><i class="fa fa-check fa-stack-1x"></i></span>-
+                    <span class="fa-stack fa-lg"><i class="fa fa-square-o fa-stack-2x"></i></span>-
+                    <span class="fa-stack fa-lg"><i class="fa fa-square-o fa-stack-2x"></i></span>-
+                    <span class="fa-stack fa-lg"><i class="fa fa-square-o fa-stack-2x"></i></span>
+                  <% else %>
+                    <span class="fa-stack fa-lg"><i class="fa fa-square-o fa-stack-2x"></i><i class="fa fa-check fa-stack-1x"></i></span>-
+                    <span class="fa-stack fa-lg"><i class="fa fa-square-o fa-stack-2x"></i></span>-
+                    <span class="fa-stack fa-lg"><i class="fa fa-square-o fa-stack-2x"></i></span>-
+                    <span class="fa-stack fa-lg"><i class="fa fa-square-o fa-stack-2x"></i></span>-
+                    <span class="fa-stack fa-lg"><i class="fa fa-square-o fa-stack-2x"></i></span>
+                  <% end %>
+                  <h4><strong>Quest Status: </strong>
+                  <% if quest.is_proofsubmitted? %>
+                    Quest Complete</h4>
+                  <% elsif quest.is_proposalaccepted? %>
+                    Quest being Completed</h4>
+                  <% elsif quest.is_proposalsent? %>
+                    Proposal Sent</h4>
+                  <% elsif quest.is_accepted? %>
+                    In Progress</h4>
+                  <% else %>
+                    Submitted</h4>
+                  <% end %>
+                </div>
+                <div class="col-md-4">
+                  <%= button_to "Messages", quest_path(quest), method: :get, class:"btn btn-primary" %>
+                  <% if quest.is_proposalsent == true && quest.is_proposalaccepted == false %>
+                    <%= button_to "View Proposal", quest_path(quest), method: :get, class:"btn btn-primary" %>
+                  <% end %>
+                  <% if quest.is_proposalaccepted != true %>
+                    <%= button_to "Delete Quest", quest_path(quest), method: :delete, class:"btn btn-default" %>
+                  <% end %>
+                </div>
+              </div>
+            </div>
+          </div>
+          <hr>
+        <% end %>
+        <% if @quests.count < 5 %>
+          <% extra = 5 - @quests.count %>
+          <% while extra > 0 do %>
+            <div class="row standard">
+            </div>
+            <hr>
+            <% extra = extra-1 %>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+<% else %>
+  <!-- Navigation -->
+  <nav class="navbar navbar-default" role="navigation">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#example-navbar-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+        </button>
+        <%= link_to image_tag("3-slim.png", :width => 150, class:"imager2"), quests_path %>
+      </div>
+      <!-- Collect the nav links, forms, and other content for toggling -->
+      <div class="collapse navbar-collapse" id="example-navbar-collapse">
+          <ul class="nav navbar-nav pull-right">
+              <!-- <li class="page-scroll">
+                  <a href="#sec2">Mailing List</a>
+              </li> -->
+              <li>
+                  <a href="#sec3">What is Squire?</a>
+              </li>
+              <li>
+                  <a href="#sec8">Become a Squire</a>
+              </li>
+              <li>
+                  <a href="#sec11">Contact Us</a>
+              </li>
+              <li>
+                <%= button_to "Duke Sign up", new_duke_registration_path, class: 'btn btn-default btn-margin-left', method:"get" %>
+                <%= button_to "Squire Sign up", new_user_registration_path, class: 'btn btn-default btn-margin-left', method:"get" %>
+              </li>
+              <li>
+                &nbsp;
+              </li>
+              <li>
+                <%= button_to "Duke Log in", new_duke_session_path, class: 'btn btn-primary btn-margin-left', id:"lemon", method:"get" %>
+                <%= button_to "Squire Log in", new_user_session_path, class: 'btn btn-primary btn-margin-left', id:"lemon", method:"get" %>
+              </li>
+          </ul>
+      </div>
+  </nav>
+  <div id="sec1" class="header alt vert">
+    <div class="container">
+      <h1>Welcome to Squire</h1>
+        <p class="lead">Whatever you want, Whenever you want</p>
+        <div>&nbsp;</div>
+        <%= button_to "Get Started", "#sec3", class:"btn btn-default btn-lg", method:"get" %>
+    </div>
+  </div>
+  <div id="sec2" class="callout">
+    <div class="vert">
+      <div class="col-md-12 text-center"><h1>Launching Summer 2015</h1></div>
+      <div class="col-md-12 text-center"><h2>We're hard at work building the best Squire we can; please keep an eye out for updates!</h2>
+        <br />
+        <br />
+        <br />
+      </div>
+      <div class="col-md-12 text-center"><h2>Enter your email below to keep up with Squire as it grows!</h2></div>
+      <div class="col-md-12 text-center">&nbsp;</div>
+      <div class="col-md-8 col-md-offset-2 text-center">
+        <div class="row">
+          <%= form_for @message do |form| %>
+            <%= form.text_field :body, autocomplete: "off", class:"form-control" %>
+            <%= form.hidden_field :squire_id, value: 1 %>
+            <%= form.hidden_field :duke_id, value: 1 %>
+            <%= form.hidden_field :quest_id, value: 1 %>
+            <%= form.submit "Submit", class:'btn btn-primary btn-lg' %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="sec3" class="blurb">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-7">
+          <h1>What is Squire?</h1>
+          <p class="lead">Simply, Squire is a service that can get you whatever you want as easily as pushing a button.</p>
+          <p class="lead">Squire works by connecting you to a hand-picked Squire instantly. This Squire will assist you in everything from buying groceries to making you a doctors appointment.</p>
+          <p class="lead">Give Squire a call or text and see what we can do!</p>
+        </div>
+        <div class="col-md-5">
+          <br />
+          <br />
+          <br />
+          <h1 class="pull-right"><i class="fa fa-users fa-3x"></i> <i class="fa fa-arrow-right fa-2x"></i> <i class="fa fa-thumbs-o-up fa-3x"></i></h1>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="sec4" class="featurette">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-2">
+          <h1><i class="fa fa-microphone fa-3x"></i></h1>
+        </div>
+        <div class="col-md-2">
+          <h1><i class="fa fa-comments fa-3x"></i></h1>
+        </div>
+        <div class="col-md-8">
+          <h1 class="pull-left">Call or Text our Squires at: (Coming soon!)</h1>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="sec5" class="blurb">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-7">
+          <h1>Three ways to connect.</h1>
+          <p class="lead">You can call, text, or use our app to contact our finest Squires.</p>
+        </div>
+        <div class="col-md-5">
+          <h1 class="pull-right"><i class="fa fa-phone fa-2x"></i> <i class="fa fa-mobile fa-2x"></i> <i class="icon-laptop icon-3x"></i></h1>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="sec6" class="featurette">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12 text-center">
+          <h1>The Squire Process</h1>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-2 col-md-offset-1 text-center">
+          <div class="featurette-item">
+            <i class="fa fa-paper-plane"></i>
+            <h4>Connect to Squire</h4>
+            <p>Whatever problem you have, or job you need done.</p>
+          </div>
+        </div>
+        <div class="col-md-2 text-center">
+          <div class="featurette-item">
+            <i class="fa fa-refresh fa-spin"></i>
+            <h4>Talk or text with a helpful Squire</h4>
+            <p>Your Squire will ask you everything they need to know to get your request done.</p>
+          </div>
+        </div>
+        <div class="col-md-2 text-center">
+          <div class="featurette-item">
+            <i class="fa fa-keyboard-o"></i>
+            <h4>Constant Communication</h4>
+            <p>Your Squire will call or text you with any questions they might have, making sure your request gets done right.</p>
+          </div>
+        </div>
+        <div class="col-md-2 text-center">
+          <div class="featurette-item">
+            <i class="fa fa-diamond"></i>
+            <h4>Receive Squire's Proposal</h4>
+            <p>Your Squire will deliver a proposal, you can receive proposals over text, email, or phonecall</p>
+          </div>
+        </div>
+        <div class="col-md-2 text-center">
+          <div class="featurette-item">
+            <i class="fa fa-thumbs-o-up"></i>
+            <h4>Accept Proposal or Request a Revision</h4>
+            <p>Everything look good? Accept the proposal and pay for your request. Don't worry, we'll hold the payment until the Squire has proven they've completed the request just as you want it.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout" id="sec7">
+    <div class="vert">
+      <div class="col-md-12 text-center"><h2>Just a sample of everything Squire can do for you.</h2></div>
+      <div class="col-md-12 text-center">&nbsp;</div>
+      <div class="col-md-8 col-md-offset-2 text-center">
+        <div class="row hidden-xs">
+         <div class="col-sm-2"><%= image_tag("presents.jpg", class:"img-circle grayscale") %><h4>Online Purhases</h4></div>
+         <div class="col-sm-2"><%= image_tag("pizza.jpg", class:"img-circle grayscale") %><h4>Pizza Delivery</h4></div>
+         <div class="col-sm-2"><%= image_tag("maid.jpg", class:"img-circle grayscale") %><h4>Maid Service</h4></div>
+         <div class="col-sm-2"><%= image_tag("handyman.png", class:"img-circle grayscale") %><h4>Handyman Service</h4></div>
+         <div class="col-sm-2"><%= image_tag("groceries.jpg", class:"img-circle grayscale") %><h4>Grocery Delivery</h4></div>
+         <div class="col-sm-2"><%= image_tag("dogwalker.jpg", class:"img-circle grayscale") %><h4>Dog Walking</h4></div>
+        </div>
+      </div>
+      <div class="col-md-12 text-center">
+        <br />
+        <br />
+        <h2>Remember, our Squires use services such as Uber, Instacart, Taskrabbit, and local delivery services, if you live in an area without these services Squire may not be able to provide you with service.</h2>
+      </div>
+    </div>
+  </div>
+
+  <div class="blurb" id="sec8">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12 text-center">
+          <h1>How to become a Squire</h1>
+          <h3>Complete an conprehensive application process</h3>
+          <h3>Have a one-on-one interview with a Squire employee</h3>
+          <h3>Complete training on several big e-commerce platforms (Amazon, Ebay, Google Shops)</h3>
+          <h3>Sign up for a Stripe account to receive payments</h3>
+          <h3>Be a humble, upstanding Squire and live up to the name!</h3>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="featurette" id="sec9">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <h1 class="pull-right">Being a Squire Pays</h1>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-3">
+          <h3>The Squire makes 5% of each Quest they complete</h3>
+          <h1 class='bigger'>5%x</h1>
+        </div>
+        <div class="col-md-3">
+          <h3>If a Squire can complete 10 Quests per hour</h3>
+          <h1 class='bigger'>10x</h1>
+        </div>
+        <div class="col-md-3">
+          <h3>With an average Quest completion value of $50</h3>
+          <h1 class='bigger'>$50=</h1>
+        </div>
+        <div class="col-md-3">
+          <h3>Then a Squires will be making about $25 per hour</h3>
+          <h1 class='bigger'>$25p/h</h1>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="blurb bright" id="sec10">
+    <div class="container">
+      <h1>Launching Summer 2015</h1>
+      <p class="lead">Check back later for more updates!</p>
+    </div>
+  </div>
+
+  <div class="blurb" id="sec11">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-6 col-md-offset-3 text-center">
+          <h3>Contact us to learn more</h3>
+          <p class="lead">Email: info@usesquire.com</p>
+          <p class="lead">Address: 986 5th Ave. W., Suite C</p>
+          <p class="lead">West Fargo ND, 58078</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <footer>
+    <div class="container">
+      <div class="row">
+        <div class="col-md-6 col-md-offset-3 text-center">
+          <ul class="list-inline">
+            <li><i class="icon-facebook icon-2x"></i></li>
+            <li><i class="icon-twitter icon-2x"></i></li>
+            <li><i class="icon-google-plus icon-2x"></i></li>
+            <li><i class="icon-pinterest icon-2x"></i></li>
+          </ul>
+          <hr>
+          <!-- <p>Squire ,<a href="<%= new_user_registration_path %>">L</a><a href="<%= new_user_session_path %>">L</a><a href="<%= new_duke_registration_path %>">C</a>., 2015</p> -->
+          <p>Squire LLC., 2015</p>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+<% end %>

@@ -1,0 +1,199 @@
+<nav class="navbar navbar-default" role="navigation">
+  <div class="navbar-header">
+    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#example-navbar-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+    </button>
+    <%= link_to image_tag("3-slim.png", :width => 150, class:"imager2"), quests_path %>
+  </div>
+  <!-- Collect the nav links, forms, and other content for toggling -->
+  <div class="collapse navbar-collapse" id="example-navbar-collapse">
+    <ul class="nav navbar-nav pull-right">
+      <li>
+          <a href="<%= quests_path %>">Ongoing Quests</a>
+      </li>
+      <li>
+          <a href="<%= completedduke_quest_path(current_duke) %>">Completed Quests</a>
+      </li>
+      <li class="dropdown">
+        <button class="btn btn-primary dropdown-toggle" type="button" id="optionsbutton" data-toggle="dropdown">Options <span class="caret"></span></button>
+        <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+          <li role="presentation", id:"options"><%= link_to 'Edit Profile',edit_duke_registration_path, id:"options" %></li>
+          <li role="presentation" class="divider", id:"options"></li>
+          <li role="presentation", id:"options"><%= link_to "Sign out", destroy_duke_session_path, method: :delete, id:"options" %></li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+</nav>
+<div class='container'>
+  <div class='col-md-8'>
+    <div class="row">
+      <div class="col-md-12">
+        <h2>Update your Squire Account</h2>
+      </div>
+    </div>
+
+    <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put }) do |f| %>
+      <%= devise_error_messages! %>
+
+      <div class="row">
+        <div class="col-md-12">
+          <%= f.label :email, "Email:" %><br />
+          <%= f.email_field :email, autofocus: true, class:"form-control" %>
+        </div>
+      </div>'
+
+      <% if devise_mapping.confirmable? && resource.pending_reconfirmation? %>
+        <div>Currently waiting confirmation for: <%= resource.unconfirmed_email %></div>
+      <% end %>
+
+      <div class='row'>
+        <div class='col-md-6'>
+          <br />
+        <%= f.label :firstname, "Firstname:" %><br />
+        <%= f.text_field :firstname, class:"form-control" %>
+        </div>
+        <div class='col-md-6'>
+          <br />
+        <%= f.label :lastname, "Lastname:" %><br />
+        <%= f.text_field :lastname, class:"form-control" %>
+        </div>
+      </div>
+
+      <div class='row'>
+        <div class='col-md-12'>
+          <br />
+          <%= f.label :birthday, "Your Birthday:" %><br />
+          <%= f.date_select :birthday, options={start_year: 1933} %>
+        </div>
+      </div>
+
+      <div class='row'>
+        <div class='col-md-12'>
+          <br />
+          <%= f.label :phonenumber, "Phonenumber:" %><br />
+          <%= f.text_field :phonenumber, class:"form-control" %>
+        </div>
+      </div>
+
+      <div class='row'>
+        <div class='col-md-12'>
+          <br />
+          <%= f.label :mailingaddress, "Mailing Address:" %><br />
+          <%= f.text_field :mailingaddress, class:"form-control" %>
+        </div>
+      </div>
+
+      <div class='row'>
+        <div class='col-md-6'>
+          <br />
+        <%= f.label :mailingcity, "City:" %><br />
+        <%= f.text_field :mailingcity, class:"form-control" %>
+        </div>
+
+        <div class='col-md-1'>
+          <br />
+        <%= f.label :mailingstate, "State:" %><br />
+        <%= f.collection_select(:mailingstate, State.all, :name, :name, class:"form-control") %>
+        </div>
+
+        <div class='col-md-4 col-md-offset-1'>
+          <br />
+        <%= f.label :mailingzipcode, "Zipcode:" %><br />
+        <%= f.text_field :mailingzipcode, class:"form-control" %>
+        </div>
+      </div>
+
+      <div class='row'>
+        <div class='col-md-12'>
+          <br />
+          <%= f.label :is_mailingsameasphysicaladdress, "Is your physical address the same as your mailing address?" %>
+          <%= f.radio_button :is_mailingsameasphysicaladdress, true, class:"switcher" %> <%= f.label :is_mailingsameasphysicaladdress, "Same" %>
+          <%= f.radio_button :is_mailingsameasphysicaladdress, false, class:"switcher" %> <%= f.label :is_mailingsameasphysicaladdress, "Different" %>
+        </div>
+      </div>
+
+      <div id="physical">
+        <div class='row'>
+          <div class='col-md-12'>
+            <br />
+            <%= f.label :physicaladdress, "Physical Address:" %><br />
+            <%= f.text_field :physicaladdress, class:"form-control" %>
+          </div>
+        </div>
+
+        <div class='row'>
+          <div class='col-md-6'>
+            <br />
+          <%= f.label :physicalcity, "City:" %><br />
+          <%= f.text_field :physicalcity, class:"form-control" %>
+          </div>
+
+          <div class='col-md-1'>
+            <br />
+          <%= f.label :physicalstate, "State:" %><br />
+          <%= f.collection_select(:physicalstate, State.all, :name, :name, class:"form-control") %>
+          </div>
+
+          <div class='col-md-4 col-md-offset-1'>
+            <br />
+          <%= f.label :physicalzipcode, "Zipcode:" %><br />
+          <%= f.text_field :physicalzipcode, class:"form-control" %>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-12">
+          <br />
+          <%= f.label :password %> <i>(leave blank if you don't want to change it)</i><br />
+          <%= f.password_field :password, autocomplete: "off", class:"form-control" %>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-12">
+          <br />
+          <%= f.label :password_confirmation %><br />
+          <%= f.password_field :password_confirmation, autocomplete: "off", class:"form-control" %>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-12">
+          <br />
+          <%= f.label :current_password %> <i>(we need your current password to confirm your changes)</i><br />
+          <%= f.password_field :current_password, autocomplete: "off", class:"form-control" %>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-12">
+          <%= f.submit "Update", class:"btn btn-primary" %>
+        </div>
+      </div>
+    <% end %>
+
+    <div class="row">
+      <div class="col-md-12">
+        <h3>Cancel my account</h3>
+        <p>Unhappy? <%= button_to "Cancel my account", registration_path(resource_name), class:"btn btn-default", data: { confirm: "Are you sure?" }, method: :delete %></p>
+        <%= link_to "Back", :back %>
+      </div>
+    </div>
+
+  </div>
+</div>
+<footer>
+</footer>
+
+<script>
+  $(document).ready(function () {
+    $('.switcher').click(function () {
+      $("#physical").toggle();
+    });
+  });
+</script>

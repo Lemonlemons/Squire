@@ -1,0 +1,348 @@
+<% if user_signed_in? %>
+  <nav class="navbar navbar-default" role="navigation">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#example-navbar-collapse">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+      </button>
+      <%= link_to image_tag("3-slim.png", :width => 150, class:"imager2"), quests_path %>
+    </div>
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="example-navbar-collapse">
+      <ul class="nav navbar-nav pull-right">
+        <li>
+            <a href="<%= quests_path %>">Dashboard</a>
+        </li>
+        <li>
+            <a href="<%= completed_quest_path(current_user) %>">Completed Quests</a>
+        </li>
+        <li>
+            <a href="<%= stats_quest_path(current_user) %>">Stats</a>
+        </li>
+        <li class="dropdown">
+          <button class="btn btn-primary dropdown-toggle" type="button" id="optionsbutton" data-toggle="dropdown">Options <span class="caret"></span></button>
+          <ul class="dropdown-menu pull-right" role="menu" aria-labelledby="menu1">
+            <li role="presentation", id:"options"><%= link_to 'Edit Profile',edit_user_registration_path, id:"options" %></li>
+            <li role="presentation", id:"options"><%= link_to 'Edit Questionairre', userquestionnaire_quest_path(current_user), id:"options" %></li>
+            <li role="presentation" class="divider", id:"options"></li>
+            <li role="presentation", id:"options"><%= link_to "Sign out", destroy_user_session_path, method: :delete, id:"options" %></li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </nav>
+  <div class='row'>
+    <div class='col-md-4'>
+      <div id="moveit">
+        <div class='well well-sm'>
+          <h2>Duke's Information</h2>
+          <div class="row">
+            <div class='col-md-12'>
+              <p><strong>Firstname: </strong><%= @duke.firstname %></p>
+            </div>
+          </div>
+          <div class="row">
+            <div class='col-md-12'>
+              <p><strong>Lastname: </strong><%= @duke.lastname %></p>
+            </div>
+          </div>
+          <% if @duke.is_mailingsameasphysicaladdress == false %>
+            <div class="row">
+              <div class='col-md-12'>
+                <p><strong>Mailing Address: </strong><%= @duke.mailingaddress %></p>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-5">
+                <p><%= @duke.mailingcity %> </p>
+              </div>
+              <div class="col-md-2">
+                <p><%= @duke.mailingstate %>,</p>
+              </div>
+              <div class='col-md-5'>
+                <p><%= @duke.mailingzipcode %></p>
+              </div>
+            </div>
+            <div class="row">
+              <div class='col-md-12'>
+                <p><strong>Physical Address: </strong><%= @duke.physicaladdress %></p>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-5">
+                <p><%= @duke.physicalcity %> </p>
+              </div>
+              <div class="col-md-2">
+                <p><%= @duke.physicalstate %>,</p>
+              </div>
+              <div class='col-md-5'>
+                <p><%= @duke.physicalzipcode %></p>
+              </div>
+            </div>
+          <% else %>
+            <div class="row">
+              <div class='col-md-12'>
+                <p><strong>Mailing Address: </strong><%= @duke.mailingaddress %></p>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-5">
+                <p><%= @duke.mailingcity %> </p>
+              </div>
+              <div class="col-md-2">
+                <p><%= @duke.mailingstate %>,</p>
+              </div>
+              <div class='col-md-5'>
+                <p><%= @duke.mailingzipcode %></p>
+              </div>
+            </div>
+          <% end %>
+          <div class="row">
+            <div class='col-md-12'>
+              <p><strong>Age: </strong><%= (Time.now.utc.to_date.year - @duke.birthday.year - ((Time.now.utc.to_date.month > @duke.birthday.month || (Time.now.utc.to_date.month == @duke.birthday.month && Time.now.utc.to_date.day >= @duke.birthday.day)) ? 0 : 1)).to_s %></p>
+            </div>
+          </div>
+        </div>
+        <div class="well well-sm">
+          <h2>Messages</h2>
+
+          <% @messages.each do |message| %>
+            <% if message.sentby == 2 %>
+              <p class="text-right"><strong>From Duke: </strong></p>
+              <h4 class="text-right"><%= message.body %></h4><br />
+            <% elsif message.sentby == 1 %>
+              <p><strong>From You: </strong></p>
+              <h4><%= message.body %></h4><br />
+            <% else %>
+              <%= "this shouldn't happen" %><br />
+            <% end %>
+          <% end %>
+
+          <h3>Send the Duke a Message:</h3>
+          <%= form_for @message do |form| %>
+            <%= form.label "Enter message below:" %>
+            <%= form.text_area :body, autocomplete: "off", class:"form-control", rows:"5", id:"comment" %>
+            <%= form.hidden_field :squire_id, value: @quest.squire_id %>
+            <%= form.hidden_field :duke_id, value: @quest.duke_id %>
+            <%= form.hidden_field :quest_id, value: @quest.id %>
+            <%= form.hidden_field :sentby, value: 1 %>
+            <p><%= form.submit "Send", class:'btn btn-primary' %></p>
+          <% end %>
+        </div>
+        <div class="well well-sm">
+          <h2>Reviews of this Duke</h2>
+          <% @reviews.each do |review| %>
+            <h4><%= review.title %></h4>
+            <p><%= review.explanation %></p>
+            <hr />
+          <% end %>
+          <% if @reviews.count < 3 %>
+            <% extra = 3 - @reviews.count %>
+            <% while extra > 0 do %>
+              <div class="row standard">
+              </div>
+              <hr>
+              <% extra = extra-1 %>
+            <% end %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-5">
+      <% if @quest.revision != nil && @quest.is_accepted == true && @quest.is_proposalsent == false %>
+        <div class="well well-sm">
+          <h2><strong>The duke requested a revision:</strong></h2>
+          <h3><%= @quest.revision %></h3>
+        </div>
+      <% end %>
+      <div class="well well-sm">
+        <% if @quest.is_completed == true %>
+          <h1>Congrats this Quest is completed!</h1>
+
+        <% elsif @quest.is_proofsubmitted == true %>
+          <h3>You've submitted proof and it's under review</h3>
+
+        <% elsif @quest.is_proposalaccepted == true %>
+          <h3>Congrats the duke has accepted and paid for the proposal, please purchase and submit proof you've completed the job</h3>
+          <% @items.each do |item| %>
+            <%= form_for item do |form|%>
+              <h3><%= item.name %></h3>
+              <p><%= form.label "Upload Receipt of this item" %></p>
+              <p><%= form.file_field :proofimg, autocomplete: "off", class:"btn btn-info" %></p>
+              <%= link_to image_tag(item.proofimg, :width => 200), image_path(item.proofimg) if item.proofimg.present? %>
+              <p><%= form.submit "Save Receipt", class:"btn btn-primary" %></p>
+            <% end %>
+          <% end %>
+          <strong>After you've added receipts for all the items, click "Submit Proof"</strong>
+          <%= button_to "Submit Proof", submitproof_quest_path(@quest), :method => "get", class:"btn btn-primary" %>
+
+        <% elsif @quest.is_proposalsent == true %>
+          <h3>Alright! You've submitted the proposal. Wait to hear what the duke thinks</h3>
+
+        <% elsif @quest.is_accepted == true %>
+
+          <img src="<%= @quest.imagesrc %>" alt="<%= @quest.title %>" class="preview">
+
+          <h3><strong>Title: </strong><%= @quest.title %></h3>
+
+          <p><strong>List of names, prices, and sources of items you plan on buying:</strong></p>
+          <hr>
+          <% @items.each do |item| %>
+            <div class="row">
+              <div class="row">
+                <h4><%= item.name %></h4>
+              </div>
+              <div class="row">
+                <strong>Price: </strong><%= number_to_currency(item.price) %> X <strong>Quantity: </strong><%= item.quantity %> = <%= number_to_currency(item.price * item.quantity) %>
+              </div>
+              <div class="row">
+                <strong>Brand: </strong><%= item.brand %> <strong>Size: </strong><%= item.size %>
+              </div>
+              <div class="row">
+                <%= item.daystoship %> Days to Ship
+              </div>
+            </div>
+            <hr>
+          <% end %>
+          <p><strong>Add a new item: </strong></p>
+          <%= form_for(@item, html: {class:"form-horizontal", role:"form"}) do |f| %>
+            <div class="form-group">
+              <%= f.label "Name:", class:"control-label col-sm-3" %>
+              <div class="col-sm-8">
+                <%= f.text_field :name, autocomplete: "off", class:"form-control" %>
+              </div>
+            </div>
+            <div class="form-group">
+              <%= f.label "Cost:", class:"control-label col-sm-3" %>
+              <div class="col-sm-3">
+                <%= f.text_field :price, autocomplete: "off", class:"form-control", placeholder:"$0.00" %>
+              </div>
+              <%= f.label "Quantity:", class:"control-label col-sm-2" %>
+              <div class="col-sm-3">
+                <%= f.text_field :quantity, autocomplete: "off", class:"form-control" %>
+              </div>
+            </div>
+            <div class="form-group">
+              <%= f.label "Brand:", class:"control-label col-sm-3" %>
+              <div class="col-sm-8">
+                <%= f.text_field :brand, autocomplete: "off", class:"form-control" %>
+              </div>
+            </div>
+            <div class="form-group">
+              <%= f.label "Size in weight or volume:", class:"control-label col-sm-3" %>
+              <div class="col-sm-8">
+                <%= f.text_field :size, autocomplete: "off", class:"form-control" %>
+              </div>
+            </div>
+            <div class="form-group">
+              <%= f.label "Number of Days to Ship:", class:"control-label col-sm-3" %>
+              <div class="col-sm-3">
+                <%= f.text_field :daystoship, autocomplete: "off", class:"form-control" %>
+              </div>
+            </div>
+
+            <%= f.hidden_field :quest_id, value: @quest.id %>
+            <%= f.hidden_field :duke_id, value: @quest.duke_id %>
+            <%= f.hidden_field :squire_id, value: @quest.squire_id %>
+
+            <p><%= f.submit "Add", class:"btn btn-primary" %></p>
+          <% end %>
+
+          <p><strong>Total Cost to You: </strong><%= number_to_currency(@quest.pricetosquire) %></p>
+          <p><strong>Platform fees: </strong><%= number_to_currency(@quest.platformfees) %></p>
+          <p><strong>Squire Fees(your cut!): </strong><%= number_to_currency(@quest.squirescut) %></p>
+          <p><strong>Total Cost of Quest: </strong><%= number_to_currency(@quest.totalprice) %></p>
+
+          <p>Is this quest unreasonable or just plan a joke? Click the flag button below</p>
+          <%= button_to "Flag Quest", flagquest_quest_path(@quest), :method => "get", class:"btn btn-warning" %>
+
+          <%= button_to "See how the proposal will look to the duke", quest_path(@quest), :method => "get", class:"btn btn-default" %>
+          <% if @quest.pricetosquire != 0 %>
+            <%= button_to "Submit Proposal", submitproposal_quest_path(@quest), :method => "get", class:"btn btn-primary" %>
+          <% else %>
+            <strong>To submit this proposal you need to fill out this form, save, then look back here for the "submit proposal" button.</strong>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+    <div class='col-md-3'>
+      <div class='well well-sm'>
+        <p>Logged in as <strong><%= current_user.email %></strong></br>
+        There are <%= @quests.count %> quests available</p>
+        <%= link_to "Get Quest", getmeaquest_quest_path(current_user), :method => "get", class: 'btn btn-primary btn-block' %>
+      </div>
+      <div class='well well-sm'>
+        <h2>Ongoing Quests</h2>
+        <hr>
+        <% @quests2.each do |quest| %>
+          <% if quest.is_proofsubmitted == false %>
+            <div class="row">
+              <div class="col-md-5">
+                <a href="<%= edit_quest_path(quest) %>"><img src="<%= quest.imagesrc %>" alt="<%= quest.id %>" class="preview"></a>
+              </div>
+              <div class="col-md-7">
+                <div class="row">
+                  <p><%= link_to quest.title, edit_quest_path(quest) %></p>
+                </div>
+                <div class="row">
+                </div>
+              </div>
+            </div>
+            <hr />
+          <% end %>
+        <% end %>
+        <% if @quests2.count < 3 %>
+          <% extra = 3 - @quests2.count %>
+          <% while extra > 0 do %>
+            <div class="row standard">
+            </div>
+            <hr>
+            <% extra = extra-1 %>
+          <% end %>
+        <% end %>
+      </div>
+      <div class="well well-sm">
+        <h2>Quests awaiting proof confirmation</h2>
+        <% @quests3.each do |quest| %>
+          <% if quest.is_proofsubmitted == true %>
+            <div class="row">
+              <div class="col-md-5">
+                <a href="<%= edit_quest_path(quest) %>"><img src="<%= quest.imagesrc %>" alt="<%= quest.id %>" class="preview"></a>
+              </div>
+              <div class="col-md-7">
+                <div class="row">
+                  <p><%= link_to quest.title, edit_quest_path(quest) %></p>
+                </div>
+                <div class="row">
+                </div>
+              </div>
+            </div>
+            <hr />
+          <% end %>
+        <% end %>
+        <% if @quests3.count < 3 %>
+          <% extra = 3 - @quests3.count %>
+          <% while extra > 0 do %>
+            <div class="row standard">
+            </div>
+            <hr>
+            <% extra = extra-1 %>
+          <% end %>
+        <% end %>
+      </div>
+      <div class="well well-sm">
+        <h2>Stats</h2>
+        <p>Number of Quests Completed: <%= current_user.completedquests %></p>
+        <p>Number of Notes Completed: <%= current_user.numberofnotes %></p>
+        <p>Number of Reviews Received: <%= current_user.numberofreviews %></p>
+        <p>Review Rating: %<%= current_user.reviewpercentage %></p>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+  </footer>
+<% else %>
+<% end %>

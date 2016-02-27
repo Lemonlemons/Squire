@@ -1,0 +1,89 @@
+<% if @quest.imagesrc != nil %>
+  <div class="row">
+    <h1>Create Quest</h1>
+  </div>
+  <hr>
+  <div class="row">
+    <div class="col-xs-6 col-sm-6 col-md-6">
+      <img src="<%= @quest.imagesrc %>" class="preview">
+    </div>
+    <div class="col-xs-6 col-sm-6 col-md-6">
+      <h3 class="flat">It needs a title...</h3>
+      <%= form_for @quest, url:"/quests" do |f| %>
+        <div class="form-group">
+          <label for="title">Title:</label>
+          <%= f.text_field :title, class:"form-control" %>
+        </div>
+        <%= f.hidden_field :imagesrc, value: @source %>
+        <%= f.hidden_field :duke_id, value: @duke.id %>
+        <%= f.hidden_field :submissiontype, value: 1 %>
+        <%= f.submit "Submit Quest", class:"btn btn-primary btn-block btn-large" %>
+        <button class="btn btn-default btn-block btn-large" onclick="window.open('', '_self', ''); window.close();">Discard Quest</button>
+      <% end %>
+    </div>
+  </div>
+<% else %>
+  <nav class="navbar navbar-default" role="navigation">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#example-navbar-collapse">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+      </button>
+      <%= link_to image_tag("3-slim.png", :width => 150, class:"imager2"), quests_path %>
+    </div>
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="example-navbar-collapse">
+      <ul class="nav navbar-nav pull-right">
+        <li>
+            <a href="<%= quests_path %>">Ongoing Quests</a>
+        </li>
+        <li>
+            <a href="<%= completedduke_quest_path(current_duke) %>">Completed Quests</a>
+        </li>
+        <li class="dropdown">
+          <button class="btn btn-primary dropdown-toggle" type="button" id="optionsbutton" data-toggle="dropdown">Options <span class="caret"></span></button>
+          <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+            <li role="presentation", id:"options"><%= link_to 'Edit Profile',edit_duke_registration_path, id:"options" %></li>
+            <li role="presentation" class="divider", id:"options"></li>
+            <li role="presentation", id:"options"><%= link_to "Sign out", destroy_duke_session_path, method: :delete, id:"options" %></li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </nav>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-6 col-md-offset-3">
+        <div class="well well-sm">
+          <h1>Create a New Quest</h1>
+          <%= form_for @quest, url: "/quests" do |f| %>
+            <div class="row center">
+              <%= image_tag("questionmark.png", width:300)  %>
+            </div>
+            <div class='row'>
+              <div class='col-md-12'>
+                <br/>
+                <%= f.label "Your Quest Picture:" %>
+                <%= f.file_field :imagesrc, autocomplete: "off", class:"btn btn-info" %>
+              </div>
+            </div>
+            <div class='row'>
+              <div class='col-md-12'>
+                <br/>
+                <%= f.label :title, "Title of your Quest:" %><br />
+                <%= f.text_field :title, class:"form-control" %>
+              </div>
+            </div>
+            <div class='row'>
+              <div class='col-md-12'>
+                <%= f.submit "Submit", class:"btn btn-primary" %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>

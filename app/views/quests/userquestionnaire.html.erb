@@ -1,0 +1,107 @@
+<nav class="navbar navbar-default" role="navigation">
+  <div class="navbar-header">
+    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#example-navbar-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+    </button>
+    <%= link_to image_tag("3-slim.png", :width => 150, class:"imager2"), quests_path %>
+  </div>
+  <!-- Collect the nav links, forms, and other content for toggling -->
+  <div class="collapse navbar-collapse" id="example-navbar-collapse">
+    <ul class="nav navbar-nav pull-right">
+      <li>
+          <a href="<%= quests_path %>">Dashboard</a>
+      </li>
+      <li>
+          <a href="<%= completed_quest_path(current_user) %>">Completed Quests</a>
+      </li>
+      <li>
+          <a href="<%= stats_quest_path(current_user) %>">Stats</a>
+      </li>
+      <li class="dropdown">
+        <button class="btn btn-primary dropdown-toggle" type="button" id="optionsbutton" data-toggle="dropdown">Options <span class="caret"></span></button>
+        <ul class="dropdown-menu pull-right" role="menu" aria-labelledby="menu1">
+          <li role="presentation", id:"options"><%= link_to 'Edit Profile',edit_user_registration_path, id:"options" %></li>
+          <li role="presentation", id:"options"><%= link_to 'Edit Questionairre', userquestionnaire_quest_path(current_user), id:"options" %></li>
+          <li role="presentation" class="divider", id:"options"></li>
+          <li role="presentation", id:"options"><%= link_to "Sign out", destroy_user_session_path, method: :delete, id:"options" %></li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+</nav>
+<div class='container'>
+  <div class='col-md-8'>
+    <% if @user.completedquestionairre == true %>
+      <h2>Update your Profile Picture and Questionnaire</h2>
+    <% else %>
+      <h2>Complete the following Questionnaire</h2>
+    <% end %>
+
+    <%= form_for @user, url: registration_path(@user), html: { method: :put } do |f| %>
+
+      <div class='row'>
+        <div class='col-md-12'>
+          <%= link_to image_tag(@user.profilepic, width:200), image_path(@user.profilepic) if @user.profilepic.present? %>
+          <br />
+          <%= f.label "Your Profile Picture:" %>
+          <%= f.file_field :profilepic, autocomplete: "off", class:"btn btn-info" %>
+        </div>
+      </div>
+
+      <div class='row'>
+        <div class='col-md-12'>
+          <br />
+          <%= f.label :description, "A brief description of yourself:" %><br />
+          <%= f.text_area :description, class:"form-control", rows:"5", id:"comment" %>
+        </div>
+      </div>
+
+      <div class='row'>
+        <div class='col-md-12'>
+          <br />
+          <%= f.label :question1, "Why do you want to be a part of Squire?" %><br />
+          <%= f.text_area :question1, class:"form-control", rows:"3", id:"comment" %>
+        </div>
+      </div>
+
+      <div class='row'>
+        <div class='col-md-12'>
+          <br />
+          <%= f.label :question2, "How do you participate in your community?" %><br />
+          <%= f.text_area :question2, class:"form-control", rows:"3", id:"comment" %>
+        </div>
+      </div>
+
+      <div class='row'>
+        <div class='col-md-12'>
+          <br />
+          <%= f.label :question3, "What's something interesting about you?" %><br />
+          <%= f.text_area :question3, class:"form-control", rows:"3", id:"comment" %>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-12">
+          <br />
+          <%= f.label :current_password %> <i>(we need your current password to complete your questionnaire)</i><br />
+          <%= f.password_field :current_password, autocomplete: "off", class:"form-control" %>
+        </div>
+      </div>
+
+      <%= f.hidden_field :completedquestionairre, value: true %>
+
+      <div class='row'>
+        <div class='col-md-12'>
+          <%= f.submit "Submit", class:"btn btn-primary" %>
+        </div>
+      </div>
+    <% end %>
+
+  </div>
+</div>
+
+<footer>
+</footer>
