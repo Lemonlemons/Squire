@@ -11,7 +11,7 @@ Rails.application.configure do
 
   config.action_controller.allow_forgery_protection = false
 
-  OpenSSL::SSL::VERIFY_PEER = OpenSSL::SSL::VERIFY_NONE
+  # OpenSSL::SSL::VERIFY_PEER = OpenSSL::SSL::VERIFY_NONE
 
   # Show full error reports and disable caching.
   config.consider_all_requests_local       = true
